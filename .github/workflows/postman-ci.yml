@@ -1,0 +1,42 @@
+name: ShopperStack API Tests
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  postman-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Newman
+        run: npm install -g newman
+
+      - name: Install HTML reporter
+        run: npm install -g newman-reporter-htmlextra
+
+      - name: Create reports directory
+        run: mkdir -p reports
+
+      - name: Run Postman collection
+        run: |
+          newman run postman/ShopperStack-Project.postman_collection.json \
+            --iteration-data postman/unique_member_per_iteration_14_rows_no_conflict_v3.csv \
+            -r cli,htmlextra \
+            --reporter-htmlextra-export reports/shopperstack-report.html
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shopperstack-postman-report
+          path: reports/shopperstack-report.html
