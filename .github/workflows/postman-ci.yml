@@ -31,6 +31,7 @@ jobs:
         run: |
           newman run postman/ShopperStack-Project.postman_collection.json \
             --iteration-data postman/unique_member_per_iteration_14_rows_no_conflict_v3.csv \
+            --insecure \
             -r cli,htmlextra \
             --reporter-htmlextra-export reports/shopperstack-report.html
 
